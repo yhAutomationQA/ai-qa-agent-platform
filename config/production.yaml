@@ -1,0 +1,39 @@
+# ─────────────────────────────────────────────
+# Production Configuration
+# ─────────────────────────────────────────────
+
+app:
+  debug: false
+
+server:
+  reload: false
+  workers: 8
+  log_level: WARNING
+
+database:
+  pool_size: 50
+  max_overflow: 25
+  pool_timeout: 60
+
+redis:
+  socket_timeout: 10
+
+logging:
+  level: WARNING
+  driver: json
+  sentry:
+    enabled: true
+    traces_sample_rate: 0.1
+
+monitoring:
+  opentelemetry:
+    enabled: true
+
+agents:
+  browser:
+    headless: true
+
+llm:
+  temperature: 0.1
+  retry:
+    max_attempts: 5

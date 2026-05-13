@@ -1,0 +1,132 @@
+version: "3.9"
+
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+networks:
+  ai_qa_network:
+    name: ai_qa_network
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ai-qa-postgres
+    environment:
+      POSTGRES_DB: ai_qa_platform
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ai_qa_network
+    logging: *default-logging
+
+  redis:
+    image: redis:7-alpine
+    container_name: ai-qa-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ai_qa_network
+    logging: *default-logging
+
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    container_name: ai-qa-backend
+    env_file:
+      - ../.env
+    environment:
+      APP_ENV: production
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/ai_qa_platform
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ai_qa_network
+    logging: *default-logging
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.frontend
+    container_name: ai-qa-frontend
+    env_file:
+      - ../.env
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:8000/api/v1
+      NEXT_PUBLIC_WEBSOCKET_URL: ws://backend:8000/ws
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - ai_qa_network
+    logging: *default-logging
+
+  orchestrator:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.orchestrator
+    container_name: ai-qa-orchestrator
+    env_file:
+      - ../.env
+    environment:
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - ai_qa_network
+    logging: *default-logging
+
+  worker:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    container_name: ai-qa-worker
+    entrypoint: ["celery", "-A", "app.worker.celery_app", "worker", "--loglevel=info"]
+    env_file:
+      - ../.env
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/1
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/ai_qa_platform
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - ai_qa_network
+    logging: *default-logging

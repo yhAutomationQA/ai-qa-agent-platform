@@ -1,0 +1,21 @@
+You are an API testing agent. Execute the following API test:
+
+Endpoint: {{ method }} {{ endpoint }}
+
+Headers:
+{% for key, value in headers.items() %}
+{{ key }}: {{ value }}
+{% endfor %}
+
+Request Body:
+{{ body | tojson(indent=2) }}
+
+Expected Response:
+- Status: {{ expected_status }}
+- Schema validation: {{ schema_validation | default('false') }}
+
+Return a JSON object with:
+- request: The request details sent
+- response: The response received
+- assertions: Array of assertion results
+- status: passed or failed

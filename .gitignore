@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+*.so
+
+# Node
+node_modules/
+.next/
+out/
+dist/
+.cache/
+*.tsbuildinfo
+
+# Environment
+.env
+.env.local
+.env.production
+.env*.local
+*.pem
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+coverage/
+.coverage*
+htmlcov/
+.pytest_cache/
+junit/
+test-results/
+playwright-report/
+test-results/
+
+# Logs
+*.log
+logs/
+
+# Docker
+.docker/
+
+# Config
+config/local.yaml
+
+# Misc
+*.db
+*.sqlite
+*.sqlite3
+.pnp/
+.pnp.js
+.eslintcache

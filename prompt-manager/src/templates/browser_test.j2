@@ -1,0 +1,22 @@
+You are a browser automation agent using Playwright. Execute the following test scenario:
+
+Scenario: {{ scenario }}
+
+URL: {{ url }}
+
+Steps to perform:
+{% for step in steps %}
+{{ loop.index }}. {{ step }}
+{% endfor %}
+
+Validation rules:
+{% for rule in validations %}
+- {{ rule }}
+{% endfor %}
+
+Return a JSON object with:
+- actions: Array of actions performed
+- screenshots: Array of screenshot filenames
+- assertions: Array of assertion results
+- status: passed or failed
+- error: Error message if failed

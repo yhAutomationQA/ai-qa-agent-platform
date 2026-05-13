@@ -1,0 +1,90 @@
+# ─────────────────────────────────────────────
+# Base Configuration — Applied to all environments
+# ─────────────────────────────────────────────
+
+app:
+  name: AI QA Agent Platform
+  version: 1.0.0
+  debug: false
+
+server:
+  host: 0.0.0.0
+  port: 8000
+  workers: 4
+  max_request_size: 10485760
+  cors:
+    enabled: true
+    origins:
+      - http://localhost:3000
+
+database:
+  pool_size: 20
+  max_overflow: 10
+  pool_timeout: 30
+  echo: false
+  migrations:
+    directory: alembic
+
+redis:
+  socket_timeout: 5
+  socket_connect_timeout: 5
+  retry_on_timeout: true
+  max_connections: 50
+
+agents:
+  default_timeout: 300
+  max_steps: 50
+  temp_dir: /tmp/ai_qa_agents
+  browser:
+    headless: true
+    viewport:
+      width: 1280
+      height: 720
+    default_browser: chromium
+  api:
+    default_timeout: 30
+    max_redirects: 5
+
+llm:
+  provider: openai
+  temperature: 0.2
+  max_tokens: 4096
+  retry:
+    max_attempts: 3
+    backoff_factor: 2.0
+  rate_limit:
+    requests_per_minute: 60
+
+testing:
+  playwright:
+    timeout: 30000
+    retries: 2
+    workers: 4
+  api:
+    timeout: 30000
+    retries: 2
+
+prompts:
+  versioning_enabled: true
+  cache_ttl: 3600
+  store_backend: file
+
+logging:
+  level: INFO
+  driver: json
+  format: structured
+  handlers:
+    - console
+    - file
+  file:
+    path: logs/ai-qa-platform.log
+    max_size: 104857600
+    backup_count: 10
+
+monitoring:
+  sentry:
+    enabled: false
+    traces_sample_rate: 0.1
+  opentelemetry:
+    enabled: false
+    service_name: ai-qa-platform

@@ -1,0 +1,26 @@
+# ─────────────────────────────────────────────
+# Staging Configuration
+# ─────────────────────────────────────────────
+
+app:
+  debug: false
+
+server:
+  reload: false
+  workers: 4
+  log_level: INFO
+
+database:
+  pool_size: 30
+  max_overflow: 15
+
+logging:
+  level: INFO
+  driver: json
+  sentry:
+    enabled: true
+    traces_sample_rate: 0.5
+
+monitoring:
+  opentelemetry:
+    enabled: true

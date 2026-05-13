@@ -1,0 +1,25 @@
+# ─────────────────────────────────────────────
+# Development Configuration
+# ─────────────────────────────────────────────
+
+app:
+  debug: true
+
+server:
+  reload: true
+  log_level: DEBUG
+
+database:
+  echo: true
+
+logging:
+  level: DEBUG
+  format: console
+
+agents:
+  browser:
+    headless: false
+
+llm:
+  provider: openai
+  temperature: 0.7

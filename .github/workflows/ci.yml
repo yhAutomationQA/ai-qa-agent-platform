@@ -1,0 +1,151 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHON_VERSION: "3.12"
+  NODE_VERSION: "20"
+
+jobs:
+  lint-python:
+    name: Lint Python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install ruff black mypy
+          pip install -r backend/requirements.txt
+
+      - name: Ruff lint
+        run: ruff check backend/ ai-orchestrator/ agents/ api-tests/ prompt-manager/ logging/
+
+      - name: Black check
+        run: black --check backend/ ai-orchestrator/ agents/ api-tests/ prompt-manager/ logging/
+
+  lint-frontend:
+    name: Lint Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: cd frontend && npm ci
+
+      - name: TypeScript check
+        run: cd frontend && npx tsc --noEmit
+
+      - name: ESLint
+        run: cd frontend && npx next lint
+
+  test-backend:
+    name: Test Backend
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: ai_qa_platform_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install -r backend/requirements.txt
+          pip install -r ai-orchestrator/requirements.txt
+          pip install -r agents/requirements.txt
+          pip install -r api-tests/requirements.txt
+          pip install -r prompt-manager/requirements.txt
+
+      - name: Run backend tests
+        run: cd backend && pytest --cov=app --cov-report=xml
+
+      - name: Run orchestrator tests
+        run: cd ai-orchestrator && pytest
+
+      - name: Run agent tests
+        run: cd agents && pytest
+
+      - name: Run prompt manager tests
+        run: cd prompt-manager && pytest
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          file: backend/coverage.xml
+
+  test-frontend:
+    name: Test Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: cd frontend && npm ci
+
+      - name: Build
+        run: cd frontend && npm run build
+
+  docker-build:
+    name: Docker Build
+    runs-on: ubuntu-latest
+    needs: [lint-python, lint-frontend, test-backend, test-frontend]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build backend
+        run: docker build -t ai-qa-backend -f docker/Dockerfile.backend .
+
+      - name: Build frontend
+        run: docker build -t ai-qa-frontend -f docker/Dockerfile.frontend .
+
+      - name: Build orchestrator
+        run: docker build -t ai-qa-orchestrator -f docker/Dockerfile.orchestrator .

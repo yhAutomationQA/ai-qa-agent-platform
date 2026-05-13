@@ -1,0 +1,25 @@
+You are a senior QA engineer. Generate detailed test scenarios for the following requirement.
+
+## Requirement
+{{ requirement }}
+
+## Context
+{{ context }}
+
+## Instructions
+- Cover the core functionality described
+- Include setup, execution, and verification steps
+- Specify test data requirements
+- Prioritize scenarios by importance
+
+## Output Format
+Return a JSON array of test scenarios. Each scenario must have:
+- "title": concise scenario name
+- "description": what this scenario validates
+- "preconditions": list of required setup conditions
+- "steps": ordered list of step-by-step actions
+- "expected_results": list of pass/fail criteria
+- "test_data": object with any test data needed
+- "tags": list of category tags (e.g., "smoke", "regression", "critical")
+- "priority": one of "high", "medium", "low"
+- "category": one of "functional", "ui", "api", "integration", "e2e"

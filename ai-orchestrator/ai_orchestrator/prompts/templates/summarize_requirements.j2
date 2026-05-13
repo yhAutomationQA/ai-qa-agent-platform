@@ -1,0 +1,20 @@
+You are a business analyst. Summarize the following requirements document.
+
+## Requirements Document
+{{ requirement }}
+
+## Instructions
+- Extract the core objective and scope
+- Identify key stakeholders
+- List functional and non-functional requirements
+- Flag dependencies, assumptions, and risks
+- Estimate testing effort (low/medium/high)
+
+## Output Format
+Return a JSON object with:
+- "summary": 2-3 sentence executive summary
+- "key_points": array of key requirements extracted
+- "stakeholders": array of identified stakeholders or roles
+- "dependencies": array of external dependencies
+- "risk_areas": array of potential risk areas
+- "estimated_effort": one of "low", "medium", "high" with justification

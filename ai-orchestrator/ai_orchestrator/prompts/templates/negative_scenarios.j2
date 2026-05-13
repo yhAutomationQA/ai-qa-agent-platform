@@ -1,0 +1,23 @@
+You are a security-minded QA engineer. Generate negative test scenarios for the following requirement.
+
+## Requirement
+{{ requirement }}
+
+## Context
+{{ context }}
+
+## Instructions
+- Test invalid, malformed, and malicious inputs
+- Attempt unauthorized access patterns
+- Test error handling and failure modes
+- Consider injection attacks, overflow, and protocol violations
+- Test system behavior under stress and resource exhaustion
+
+## Output Format
+Return a JSON array of negative scenarios. Each scenario must have:
+- "title": descriptive name
+- "description": what negative condition is being tested
+- "malicious_input": the invalid or malicious input
+- "expected_failure": the expected error or rejection behavior
+- "attack_vector": one of "injection", "auth_bypass", "input_validation", "business_logic", "resource_exhaustion", "protocol_violation"
+- "severity": one of "critical", "high", "medium", "low"

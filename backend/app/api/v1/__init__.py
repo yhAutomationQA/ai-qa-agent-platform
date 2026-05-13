@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1 import agents, tests, runs, prompts, configs, jira, analysis, test_generation
+from app.api.v1 import agents, tests, runs, prompts, configs, jira, analysis, test_generation, execution
 
 router = APIRouter()
 
@@ -12,3 +12,4 @@ router.include_router(configs.router, prefix="/configs", tags=["configs"])
 router.include_router(jira.router, prefix="/jira", tags=["jira"])
 router.include_router(analysis.router, prefix="/analysis", tags=["analysis"])
 router.include_router(test_generation.router, prefix="/test-generation", tags=["test-generation"])
+router.include_router(execution.router, prefix="/execution", tags=["execution"])

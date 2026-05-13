@@ -29,7 +29,10 @@ def setup_logging() -> None:
 
     root_logger = logging.getLogger()
     root_logger.setLevel(settings.LOG_LEVEL.upper())
+    for handler in root_logger.handlers[:]:
+        root_logger.removeHandler(handler)
 
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(settings.LOG_LEVEL.upper())
+    handler.setFormatter(logging.Formatter("%(message)s"))
     root_logger.addHandler(handler)

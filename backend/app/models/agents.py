@@ -39,7 +39,7 @@ class Agent(Base):
         SAEnum(AgentStatus), nullable=False, default=AgentStatus.IDLE
     )
     config: Mapped[dict | None] = mapped_column(JSON, nullable=True, default=dict)
-    metadata: Mapped[dict | None] = mapped_column(JSON, nullable=True, default=dict)
+    metadata_: Mapped[dict | None] = mapped_column("metadata", JSON, nullable=True, default=dict)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=datetime.utcnow
     )

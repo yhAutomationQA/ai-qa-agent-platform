@@ -6,6 +6,7 @@ from agents.src.browser.agent import BrowserAgent
 from agents.src.api.agent import APIAgent
 from agents.src.planner.agent import PlannerAgent
 from agents.src.reporter.agent import ReporterAgent
+from agents.src.requirement_analysis.agent import RequirementAnalysisAgent
 
 logger = structlog.get_logger()
 
@@ -32,3 +33,4 @@ register_agent("browser", BrowserAgent)
 register_agent("api", APIAgent)
 register_agent("planner", PlannerAgent)
 register_agent("reporter", ReporterAgent)
+register_agent("requirement_analysis", RequirementAnalysisAgent)

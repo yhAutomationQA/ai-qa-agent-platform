@@ -34,6 +34,7 @@ minversion = "8.0"
 testpaths = ["tests"]
 python_files = ["test_*.py", "*_test.py"]
 addopts = "-v --tb=short --strict-markers"
+asyncio_mode = "auto"
 
 [tool.coverage.run]
 source = ["src"]

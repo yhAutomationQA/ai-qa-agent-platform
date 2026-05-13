@@ -1,28 +1,39 @@
 import { defineConfig, devices } from "@playwright/test";
 import { resolve } from "path";
+import { config } from "dotenv";
+
+config({ path: resolve(__dirname, ".env") });
+
+const CI = !!process.env.CI;
 
 export default defineConfig({
-  testDir: "./src/tests",
+  testDir: "./tests",
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 4 : undefined,
+  forbidOnly: CI,
+  retries: CI ? 2 : 0,
+  workers: CI ? 4 : undefined,
+  maxFailures: CI ? 10 : undefined,
+
   reporter: [
-    ["html", { outputFolder: "playwright-report" }],
+    ["list"],
+    ["html", { outputFolder: "playwright-report", open: CI ? "never" : "on-failure" }],
     ["json", { outputFile: "test-results/results.json" }],
     ["junit", { outputFile: "test-results/junit.xml" }],
-    ["list"],
+    ["./src/reporters/custom-reporter.ts"],
   ],
-  timeout: 30000,
-  expect: {
-    timeout: 10000,
-  },
+
+  timeout: Number(process.env.TIMEOUT) || 30000,
+  expect: { timeout: 10000 },
+
   use: {
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000",
+    baseURL: process.env.BASE_URL || "http://localhost:3000",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
+    actionTimeout: 10000,
+    navigationTimeout: 15000,
   },
+
   projects: [
     {
       name: "chromium",
@@ -36,8 +47,13 @@ export default defineConfig({
       name: "webkit",
       use: { ...devices["Desktop Safari"] },
     },
+    {
+      name: "chromium-mobile",
+      use: { ...devices["Pixel 5"] },
+    },
   ],
-  outputDir: "test-results",
+
+  outputDir: "test-results/artifacts",
   globalSetup: resolve(__dirname, "src/config/global-setup.ts"),
   globalTeardown: resolve(__dirname, "src/config/global-teardown.ts"),
 });

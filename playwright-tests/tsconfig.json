@@ -11,12 +11,16 @@
     "isolatedModules": true,
     "baseUrl": ".",
     "paths": {
-      "@fixtures/*": ["src/fixtures/*"],
+      "@src/*": ["src/*"],
       "@pages/*": ["src/pages/*"],
-      "@utils/*": ["src/utils/*"],
-      "@config/*": ["src/config/*"]
+      "@fixtures/*": ["src/fixtures/*"],
+      "@helpers/*": ["src/helpers/*"],
+      "@config/*": ["src/config/*"],
+      "@api/*": ["src/api/*"],
+      "@types/*": ["src/types/*"],
+      "@data/*": ["data/*"]
     }
   },
-  "include": ["src/**/*.ts", "playwright.config.ts"],
+  "include": ["src/**/*.ts", "tests/**/*.ts", "playwright.config.ts"],
   "exclude": ["node_modules"]
 }

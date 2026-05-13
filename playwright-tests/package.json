@@ -7,13 +7,21 @@
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug",
+    "test:api": "playwright test --grep @api",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:chrome": "playwright test --project=chromium",
     "report": "playwright show-report",
     "codegen": "playwright codegen",
+    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
+    "format": "prettier --write 'src/**/*.ts' 'tests/**/*.ts' '*.ts'",
+    "format:check": "prettier --check 'src/**/*.ts' 'tests/**/*.ts' '*.ts'",
+    "clean": "rm -rf test-results playwright-report",
     "install": "playwright install --with-deps"
   },
   "devDependencies": {
     "@playwright/test": "^1.45.0",
     "@types/node": "^20.14.0",
+    "dotenv": "^16.4.5",
     "typescript": "^5.5.0"
   }
 }

@@ -1,7 +1,7 @@
-import { FullConfig } from "@playwright/test";
-
-async function globalTeardown(config: FullConfig): Promise<void> {
-  console.log("[Global Teardown] Playwright test run completed");
+async function globalTeardown(): Promise<void> {
+  console.log("\n═══════════════════════════════════════════");
+  console.log("  Global Teardown — cleaning up");
+  console.log("═══════════════════════════════════════════");
 }
 
 export default globalTeardown;

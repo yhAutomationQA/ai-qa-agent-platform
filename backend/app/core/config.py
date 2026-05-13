@@ -57,6 +57,12 @@ class Settings(BaseSettings):
     CELERY_BROKER_URL: str = "redis://localhost:6379/1"
     CELERY_RESULT_BACKEND: str = "redis://localhost:6379/1"
 
+    # ── Jira ─────────────────────────────────
+    JIRA_BASE_URL: str = ""
+    JIRA_EMAIL: str = ""
+    JIRA_API_TOKEN: str = ""
+    JIRA_TIMEOUT: int = 30
+
     # ── Derived ──────────────────────────────
     @property
     def database_url_sync(self) -> str:

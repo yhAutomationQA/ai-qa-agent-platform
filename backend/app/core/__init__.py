@@ -1,5 +1,5 @@
 from app.core.config import settings
-from app.core.logging import setup_logging, get_logger
+from app.core.logging import setup_logging
 from app.core.database import engine, async_session_factory, get_db, Base
 from app.core.exceptions import (
     AppError,
@@ -17,7 +17,6 @@ from app.core.exceptions import (
 __all__ = [
     "settings",
     "setup_logging",
-    "get_logger",
     "engine",
     "async_session_factory",
     "get_db",

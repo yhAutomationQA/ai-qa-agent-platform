@@ -10,6 +10,7 @@ install-dev: ## Install all development dependencies
 	pip install -r backend/requirements.txt
 	pip install -r ai-orchestrator/requirements.txt
 	pip install -r agents/requirements.txt
+	pip install -r test_generation/requirements.txt
 	pip install -r api-tests/requirements.txt
 	pip install -r prompt-manager/requirements.txt
 	pip install -r logging/requirements.txt
@@ -21,6 +22,7 @@ install-dev-python: ## Install Python dev dependencies only
 	pip install -r backend/requirements.txt
 	pip install -r ai-orchestrator/requirements.txt
 	pip install -r agents/requirements.txt
+	pip install -r test_generation/requirements.txt
 	pip install -r api-tests/requirements.txt
 	pip install -r prompt-manager/requirements.txt
 	pip install -r logging/requirements.txt
@@ -33,6 +35,7 @@ lint: ## Run all linters
 	cd backend && ruff check .
 	cd ai-orchestrator && ruff check .
 	cd agents && ruff check .
+	cd test_generation && ruff check .
 	cd api-tests && ruff check .
 	cd prompt-manager && ruff check .
 	cd logging && ruff check .
@@ -43,6 +46,7 @@ format: ## Format all code
 	cd backend && black .
 	cd ai-orchestrator && black .
 	cd agents && black .
+	cd test_generation && black .
 	cd api-tests && black .
 	cd prompt-manager && black .
 	cd logging && black .
@@ -58,6 +62,7 @@ test: ## Run all tests
 	cd backend && pytest
 	cd ai-orchestrator && pytest
 	cd agents && pytest
+	cd test_generation && pytest
 	cd api-tests && pytest
 	cd prompt-manager && pytest
 	cd logging && pytest

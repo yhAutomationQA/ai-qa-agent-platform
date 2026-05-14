@@ -24,17 +24,22 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.txt
+            test_generation/requirements.txt
 
       - name: Install dependencies
         run: |
-          pip install ruff black mypy
+          pip install ruff black
           pip install -r backend/requirements.txt
+          pip install -r test_generation/requirements.txt
 
       - name: Ruff lint
-        run: ruff check backend/ ai-orchestrator/ agents/ api-tests/ prompt-manager/ logging/
+        run: ruff check backend/ ai-orchestrator/ agents/ api-tests/ test_generation/ prompt-manager/ logging/
 
       - name: Black check
-        run: black --check backend/ ai-orchestrator/ agents/ api-tests/ prompt-manager/ logging/
+        run: black --check backend/ ai-orchestrator/ agents/ api-tests/ test_generation/ prompt-manager/ logging/
 
   lint-frontend:
     name: Lint Frontend
@@ -90,13 +95,21 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: |
+            backend/requirements.txt
+            ai-orchestrator/requirements.txt
+            agents/requirements.txt
+            api-tests/requirements.txt
+            test_generation/requirements.txt
+            prompt-manager/requirements.txt
 
       - name: Install dependencies
         run: |
           pip install -r backend/requirements.txt
           pip install -r ai-orchestrator/requirements.txt
           pip install -r agents/requirements.txt
-          pip install -r api-tests/requirements.txt
+          pip install -r test_generation/requirements.txt
           pip install -r prompt-manager/requirements.txt
 
       - name: Run backend tests
@@ -108,13 +121,17 @@ jobs:
       - name: Run agent tests
         run: cd agents && pytest
 
+      - name: Run test generation tests
+        run: cd test_generation && pytest
+
       - name: Run prompt manager tests
         run: cd prompt-manager && pytest
 
-      - name: Upload coverage
+      - name: Upload backend coverage
         uses: codecov/codecov-action@v4
         with:
           file: backend/coverage.xml
+          flags: backend
 
   test-frontend:
     name: Test Frontend

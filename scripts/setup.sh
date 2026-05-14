@@ -36,6 +36,7 @@ install_python_deps() {
     pip install -r backend/requirements.txt
     pip install -r ai-orchestrator/requirements.txt
     pip install -r agents/requirements.txt
+    pip install -r test_generation/requirements.txt
     pip install -r api-tests/requirements.txt
     pip install -r prompt-manager/requirements.txt
     pip install -r logging/requirements.txt

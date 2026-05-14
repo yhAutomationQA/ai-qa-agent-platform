@@ -1,7 +1,7 @@
 import json
 import structlog
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 from ai_orchestrator.models import TokenUsage
 from ai_orchestrator.config import ai_config
@@ -28,7 +28,7 @@ class TokenTracker:
             total_tokens=prompt_tokens + completion_tokens,
             model=model,
             provider=provider,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
         )
         usage.cost = usage.cost_usd
         self.session_usage.append(usage)

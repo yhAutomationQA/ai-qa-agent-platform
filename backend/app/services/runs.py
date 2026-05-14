@@ -2,7 +2,7 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import List
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.core.database import get_db
 from app.models.test_runs import TestRun, RunStatus
@@ -38,7 +38,7 @@ class RunService:
         run = await self.get_run(run_id)
         run.status = RunStatus(payload.status)
         if payload.status in ("running",):
-            run.started_at = datetime.utcnow()
+            run.started_at = datetime.now(timezone.utc)
         if payload.status in ("passed", "failed", "error", "cancelled", "timeout"):
             run.completed_at = datetime.utcnow()
         await self.db.flush()
@@ -49,7 +49,7 @@ class RunService:
         run = await self.get_run(run_id)
         if run.status in (RunStatus.PENDING, RunStatus.QUEUED, RunStatus.RUNNING):
             run.status = RunStatus.CANCELLED
-            run.completed_at = datetime.utcnow()
+            run.completed_at = datetime.now(timezone.utc)
             await self.db.flush()
             await self.db.refresh(run)
         return run

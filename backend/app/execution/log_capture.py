@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import AsyncIterator
 
 from app.execution.models import ExecutionLog
@@ -25,7 +25,7 @@ class LogCapture:
             return
         self._logs.append(
             ExecutionLog(
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 level=level,
                 source=source,
                 message=message,

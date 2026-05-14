@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from pydantic import BaseModel, Field
@@ -76,7 +76,7 @@ class AnalysisMetadata(BaseModel):
     total_tokens: int = 0
     processing_time_ms: float = 0.0
     source_issue_key: str = ""
-    analyzed_at: datetime = Field(default_factory=datetime.utcnow)
+    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class RequirementAnalysisOutput(BaseModel):

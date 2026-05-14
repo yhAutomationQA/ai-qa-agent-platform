@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
-from datetime import datetime
+from datetime import datetime, timezone
 import structlog
 
 logger = structlog.get_logger()
@@ -47,7 +47,7 @@ class BaseAgent(ABC):
 
     async def run(self, task: dict) -> AgentResult:
         self.logger.info("agent_execution_started", task=task.get("name"))
-        started = datetime.utcnow()
+        started = datetime.now(timezone.utc)
 
         if not await self.validate(task):
             return AgentResult(status="invalid", error="Task validation failed")
@@ -55,7 +55,7 @@ class BaseAgent(ABC):
         try:
             result = await self.execute(task)
             result.started_at = started
-            result.completed_at = datetime.utcnow()
+            result.completed_at = datetime.now(timezone.utc)
             result.duration_ms = (
                 result.completed_at - result.started_at
             ).total_seconds() * 1000
@@ -67,7 +67,7 @@ class BaseAgent(ABC):
                 status="error",
                 error=str(e),
                 started_at=started,
-                completed_at=datetime.utcnow(),
+                completed_at=datetime.now(timezone.utc),
             )
         finally:
             await self.cleanup()

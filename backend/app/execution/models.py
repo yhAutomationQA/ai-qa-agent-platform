@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Any, Literal
-from datetime import datetime
+from datetime import datetime, timezone
 import uuid
 from enum import Enum
 
@@ -15,7 +15,7 @@ class StepStatus(str, Enum):
 
 
 class ExecutionLog(BaseModel):
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     level: str = "INFO"
     source: str = "system"
     message: str = ""
@@ -26,7 +26,7 @@ class ExecutionArtifact(BaseModel):
     path: str
     type: Literal["screenshot", "log", "report", "video", "trace", "other"] = "other"
     size_bytes: int | None = None
-    captured_at: datetime = Field(default_factory=datetime.utcnow)
+    captured_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class TestStepResult(BaseModel):

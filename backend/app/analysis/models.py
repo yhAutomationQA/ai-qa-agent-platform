@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from typing import Any
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 
 
@@ -106,7 +106,7 @@ class FailureAnalysis(BaseModel):
     summary: AnalysisSummary = Field(default_factory=AnalysisSummary)
     ai_used: bool = False
     ai_fallback: bool = False
-    analyzed_at: datetime = Field(default_factory=datetime.utcnow)
+    analyzed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     duration_ms: float | None = None
 
 

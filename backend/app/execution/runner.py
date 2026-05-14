@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from app.execution.config import ExecutionConfig
@@ -110,7 +110,7 @@ class TestExecutionEngine:
             )
         except asyncio.TimeoutError:
             execution.status = ExecutionStatus.TIMEOUT
-            execution.completed_at = datetime.utcnow()
+            execution.completed_at = datetime.now(timezone.utc)
             execution.error_message = f"Timed out after {timeout}s"
             return execution
 

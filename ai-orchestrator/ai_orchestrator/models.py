@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Any
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 @dataclass
@@ -11,7 +11,7 @@ class TokenUsage:
     model: str = ""
     provider: str = ""
     cost: float = 0.0
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
     @property
     def cost_usd(self) -> float:

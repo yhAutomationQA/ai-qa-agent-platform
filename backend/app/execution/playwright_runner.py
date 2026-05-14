@@ -1,6 +1,6 @@
 import asyncio
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -36,7 +36,7 @@ class PlaywrightRunner:
         extra_args: list[str] | None = None,
     ) -> TestExecution:
         execution.status = ExecutionStatus.RUNNING
-        execution.started_at = datetime.utcnow()
+        execution.started_at = datetime.now(timezone.utc)
         log_capture = LogCapture(max_bytes=self.config.log_max_bytes)
 
         log_capture.add(f"Starting Playwright execution: {execution.test_case_name}", level="INFO")
@@ -95,7 +95,7 @@ class PlaywrightRunner:
             log_capture.add(f"Execution error: {e}", level="ERROR")
             exit_code = -1
 
-        execution.completed_at = datetime.utcnow()
+        execution.completed_at = datetime.now(timezone.utc)
         execution.duration_ms = (
             (execution.completed_at - execution.started_at).total_seconds() * 1000
         )

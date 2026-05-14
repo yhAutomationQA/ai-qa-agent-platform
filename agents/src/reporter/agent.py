@@ -1,5 +1,5 @@
 from typing import Any
-from datetime import datetime
+from datetime import datetime, timezone
 
 from agents.src.base.agent import BaseAgent, AgentConfig, AgentResult
 
@@ -32,7 +32,7 @@ class ReporterAgent(BaseAgent):
         errors = sum(1 for r in results if r.get("status") == "error")
 
         return {
-            "generated_at": datetime.utcnow().isoformat(),
+            "generated_at": datetime.now(timezone.utc).isoformat(),
             "summary": {
                 "total": total,
                 "passed": passed,

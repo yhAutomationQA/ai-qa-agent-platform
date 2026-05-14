@@ -1,6 +1,6 @@
 import json
 import shutil
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -24,7 +24,7 @@ class ExecutionStorage:
         step_name: str = "screenshot",
     ) -> ExecutionArtifact:
         run_dir = self._run_dir(execution_id)
-        filename = f"{step_name}_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.png"
+        filename = f"{step_name}_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.png"
         filepath = run_dir / filename
         filepath.write_bytes(screenshot_data)
         return ExecutionArtifact(

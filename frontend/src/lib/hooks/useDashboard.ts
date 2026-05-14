@@ -1,26 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import apiClient from "@/lib/api";
 import type { DashboardData, TimeRange } from "@/lib/dashboard-types";
-
-const defaultDashboardData: DashboardData = {
-  summary: {
-    totalTests: 0,
-    passed: 0,
-    failed: 0,
-    skipped: 0,
-    errored: 0,
-    passRate: 100,
-    totalDurationMs: 0,
-    totalRuns: 0,
-    activeAgents: 0,
-  },
-  trends: [],
-  risks: [],
-  recentFailures: [],
-  insights: [],
-};
 
 function generateMockDashboardData(): DashboardData {
   const passed = 142;
@@ -87,7 +68,8 @@ function generateMockDashboardData(): DashboardData {
       id: "f1",
       testName: "Login with invalid credentials shows error",
       suite: "AuthSuite",
-      errorMessage: "AssertionError: Expected error text 'Invalid credentials' but found empty",
+      errorMessage:
+        "AssertionError: Expected error text 'Invalid credentials' but found empty",
       category: "assertion",
       riskLevel: "high",
       timestamp: new Date(now - 600000).toISOString(),
@@ -98,7 +80,8 @@ function generateMockDashboardData(): DashboardData {
       id: "f2",
       testName: "Payment checkout - credit card validation",
       suite: "PaymentSuite",
-      errorMessage: "TimeoutError: waitForSelector('.payment-confirm') exceeded 30000ms",
+      errorMessage:
+        "TimeoutError: waitForSelector('.payment-confirm') exceeded 30000ms",
       category: "timeout",
       riskLevel: "high",
       timestamp: new Date(now - 1800000).toISOString(),
@@ -210,18 +193,36 @@ function generateMockDashboardData(): DashboardData {
   };
 }
 
+let backendAvailable: boolean | null = null;
+
+async function checkBackend(): Promise<boolean> {
+  if (backendAvailable !== null) return backendAvailable;
+  try {
+    const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+    const res = await fetch(`${base.replace(/\/api\/v1\/?$/, "")}/api`, {
+      method: "GET",
+      signal: AbortSignal.timeout(2000),
+    });
+    backendAvailable = res.ok;
+  } catch {
+    backendAvailable = false;
+  }
+  return backendAvailable;
+}
+
 export function useDashboard(timeRange: TimeRange = "7d") {
   return useQuery<DashboardData>({
     queryKey: ["dashboard", timeRange],
     queryFn: async () => {
-      try {
-        const { data } = await apiClient.get("/dashboard", {
-          params: { range: timeRange },
-        });
-        return data as DashboardData;
-      } catch {
-        return generateMockDashboardData();
-      }
+      const alive = await checkBackend();
+      if (!alive) return generateMockDashboardData();
+
+      const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+      const res = await fetch(`${base}/dashboard?range=${timeRange}`, {
+        signal: AbortSignal.timeout(5000),
+      });
+      if (!res.ok) return generateMockDashboardData();
+      return (await res.json()) as DashboardData;
     },
     refetchInterval: 60_000,
     staleTime: 30_000,
